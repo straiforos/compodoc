@@ -31,6 +31,7 @@ export class RouterParserUtil {
         /(['"]loadChildren['"]:)\(\)(:[^)]+?)?=>\("import\((\\'|'|"|`)([^'"]+?)(\\'|'|"|`)\)"\)\.['"]([^)]+?)['"]/g;
     private transformAngular8ImportSyntaxComponentAsyncAwait =
         /(['"]loadComponent['"]:)\(\)(:[^)]+?)?=>\("import\((\\'|'|"|`)([^'"]+?)(\\'|'|"|`)\)"\)\.['"]([^)]+?)['"]/g;
+    private transformAngularLazyLoadedSyntaxWithoutQuotes = /loadChildren:\s*\(\s*(['"]?)[^'"]*\1\s*\)\s*=>\s*import\([^)]*\)\.then\(\(.*\) => .*\)/g;
 
     private static instance: RouterParserUtil;
     private constructor() {}
@@ -122,6 +123,11 @@ export class RouterParserUtil {
 
         routesWithoutSpaces = routesWithoutSpaces.replace(
             this.transformAngular8ImportSyntaxComponentAsyncAwait,
+            '$1"$4#$6"'
+        );
+
+        routesWithoutSpaces = routesWithoutSpaces.replace(
+            this.transformAngularLazyLoadedSyntaxWithoutQuotes,
             '$1"$4#$6"'
         );
 
